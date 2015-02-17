@@ -1,0 +1,35 @@
+upstream circulosaudavel_server {
+    server unix:/webapps/circulosaudavel/run/gunicorn.sock fail_timeout=0;
+}
+
+server {
+    server_name portal.circulosaudavel.com.br;
+    listen 666;
+
+    access_log off;
+
+    location /static/ {
+        alias /webapps/circulosaudavel/circulosaudavel/circulosaudavel/static/;
+    }
+
+    location /media/ {
+        alias /webapps/circulosaudavel/circulosaudavel/circulosaudavel/media/;
+    }
+
+    location / {
+        add_header 'Access-Control-Allow-Origin' '*';
+        add_header 'Access-Control-Allow-Credentials' 'true';
+        add_header 'Access-Control-Allow-Methods' 'GET';
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header Host $http_host;
+        proxy_redirect off;
+        if (!-f $request_filename) {
+            proxy_pass http://circulosaudavel_server;
+            break;
+        }
+    }
+    error_page 500 502 503 504 /500.html;
+    location = /500.html {
+        root /webapps/hello_django/static/;
+    }
+}
