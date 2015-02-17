@@ -1,0 +1,105 @@
+1 - Install Python
+
+cd ~
+mkdir tmp
+cd tmp
+wget http://www.python.org/ftp/python/2.7.7/Python-2.7.7.tgz
+tar zxvf Python-2.7.7.tgz
+cd Python-2.7.7
+./configure --prefix=$HOME/opt/python-2.7.7
+make
+make install
+
+---------------------------------------------------------------------------------
+
+2 - Edit .bashrc and .bash_profile ( cd $HOME )
+
+export PATH=$HOME/opt/python-2.7.7/bin:$PATH
+source ~/.bashrc
+
+---------------------------------------------------------------------------------
+
+3 - Install pip
+
+curl https://bootstrap.pypa.io/get-pip.py > ~/tmp/get-pip.py
+python ~/tmp/get-pip.py
+
+---------------------------------------------------------------------------------
+
+4 - Install virtualenv
+
+pip install virtualenv
+
+---------------------------------------------------------------------------------
+
+5 - Create virtualenv
+
+virtualenv $HOME/<domain>/env
+
+---------------------------------------------------------------------------------
+
+6 - Load the virtualenv
+
+source $HOME/domainname/env/bin/activate
+
+---------------------------------------------------------------------------------
+
+7 - Install the packages
+
+pip install Django
+pip install MySQL-python
+pip install ..
+
+---------------------------------------------------------------------------------
+
+8 - Clone the repository
+
+cd $HOME/<domain>
+git clone ..
+
+---------------------------------------------------------------------------------
+
+9 - Create passenger_wsgi.py
+
+import sys, os
+cwd = os.getcwd()
+
+#project folder
+projectfolder = ‘phocus’
+
+#project name
+projectname = 'phocus'
+
+sys.path.append(cwd)
+sys.path.append(cwd + '/' + projectfolder)  #You must add your project here
+
+#Switch to new python
+if sys.version < "2.7.7": os.execl(cwd+"/env/bin/python", "python2.7", *sys.argv)
+
+sys.path.insert(0,cwd+'/env/bin')
+sys.path.insert(0,cwd+'/env/lib/python2.7/site-packages/django')
+sys.path.insert(0,cwd+'/env/lib/python2.7/site-packages')
+
+os.environ['DJANGO_SETTINGS_MODULE'] = projectname + ".settings"
+from django.core.wsgi import get_wsgi_application
+application = get_wsgi_application()
+
+---------------------------------------------------------------------------------
+
+10 - Symbolic link
+
+cd $HOME/phocus.com.br/public
+ln -s $HOME/phocus.com.br/phocus/phocus/static/ static
+ln -s $HOME/phocus.com.br/phocus/phocus/media/ media
+
+---------------------------------------------------------------------------------
+
+11 - Copy static files
+
+./manage.py collectstatic
+
+---------------------------------------------------------------------------------
+
+12 - Restart passenger
+
+touch ~/phocus.com.br/tmp/restart.txt
