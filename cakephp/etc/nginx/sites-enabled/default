@@ -1,0 +1,74 @@
+upstream backend {
+    server 127.0.0.1:9000;
+}
+
+server {
+    listen 80 default;
+    root    /var/www/a12/app/webroot;
+    index   index.php index.html index.htm;
+
+    server_tokens off;
+
+    #access_log  /var/www/apps/appname/logs/access.log;
+    #error_log   /var/www/apps/appname/logs/error.log;
+
+    client_max_body_size 20M;
+
+    rewrite_log on;
+
+    # Blog config
+    #location /wordpress/ {
+    #    try_files $uri $uri/ /wordpress/index.php?$args;
+    #}
+
+    # Not found this on disk?
+    # Feed to CakePHP for further processing!
+    if (!-e $request_filename) {
+        rewrite ^/(.+)$ /index.php last;
+        break;
+    }
+
+    # Pass the PHP scripts to FastCGI server
+    # listening on 127.0.0.1:9000
+    location ~ \.php$ {
+        fastcgi_pass   backend;
+        fastcgi_index  index.php;
+        fastcgi_intercept_errors on; # to support 404s for PHP files not found
+        fastcgi_param  SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include        fastcgi_params;
+    }
+
+    # Static files.
+    # Set expire headers, Turn off access log
+    location ~* \favicon.ico$ {
+        access_log off;
+        expires 1d;
+        add_header Cache-Control public;
+    }
+    location ~ ^/(img|cjs|ccss)/ {
+        access_log off;
+        expires 7d;
+        add_header Cache-Control public;
+    }
+
+    location ~ ^/(php_status|php_ping)$ {
+      fastcgi_pass backend;
+      fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+      include fastcgi_params;
+      allow 127.0.0.1;
+      deny all;
+    }
+
+    location /nginx_status {
+      stub_status on;
+      access_log off;
+      allow 127.0.0.1;
+      deny all;
+    }
+
+    # Deny access to .htaccess files,
+    # git & svn repositories, etc
+    location ~ /(\.ht|\.git|\.svn) {
+        deny  all;
+    }
+}
