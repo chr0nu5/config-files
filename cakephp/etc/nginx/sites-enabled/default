@@ -3,48 +3,232 @@ upstream backend {
 }
 
 server {
-    listen 80 default;
-    root    /var/www/a12/app/webroot;
-    index   index.php index.html index.htm;
+    
+    listen 443 ssl;
+    ssl_certificate /home/certificado/www.a12.com.crt;
+    ssl_certificate_key /home/certificado/www.a12.com.key;
+
+    listen 666;
+    server_name a12.com www.a12.com;
+    index index.php index.html index.htm;
+    root /var/www/html/app/webroot;
 
     server_tokens off;
-
-    #access_log  /var/www/apps/appname/logs/access.log;
-    #error_log   /var/www/apps/appname/logs/error.log;
-
     client_max_body_size 20M;
-
     rewrite_log on;
+    
+    location ^~ /revive {
+        alias /var/www/html/others/revive;
+        index index.php index.html index.htm;
+        try_files $uri $uri/ =404;
 
-    # Blog config
-    #location /wordpress/ {
-    #    try_files $uri $uri/ /wordpress/index.php?$args;
-    #}
-
-    # Not found this on disk?
-    # Feed to CakePHP for further processing!
-    if (!-e $request_filename) {
-        rewrite ^/(.+)$ /index.php last;
-        break;
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_pass backend;
+            fastcgi_index index.php;
+        }
     }
 
-    # Pass the PHP scripts to FastCGI server
-    # listening on 127.0.0.1:9000
+    location ^~ /topo {
+        alias /var/www/html/blogs/topo;
+        index index.php index.html index.htm;
+        try_files $uri $uri/ /topo/index.php;
+
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_pass backend;
+            fastcgi_split_path_info ^(/topo)(/.*)$;
+            fastcgi_param SCRIPT_FILENAME /var/www/html/blogs/topo/index.php;
+            fastcgi_param PATH_INFO $fastcgi_path_info;
+        }
+    }
+
+    location ^~ /909 {
+        alias /var/www/html/blogs/909;
+        index index.php index.html index.htm;
+        try_files $uri $uri/ /909/index.php;
+
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_pass backend;
+            fastcgi_split_path_info ^(/909)(/.*)$;
+            fastcgi_param SCRIPT_FILENAME /var/www/html/blogs/909/index.php;
+            fastcgi_param PATH_INFO $fastcgi_path_info;
+        }
+    }
+
+    location ^~ /academia {
+        alias /var/www/html/blogs/academia;
+        index index.php index.html index.htm;
+        try_files $uri $uri/ /academia/index.php;
+
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_pass backend;
+            fastcgi_split_path_info ^(/academia)(/.*)$;
+            fastcgi_param SCRIPT_FILENAME /var/www/html/blogs/academia/index.php;
+            fastcgi_param PATH_INFO $fastcgi_path_info;
+        }
+    }
+
+    location ^~ /aparecida {
+        alias /var/www/html/blogs/aparecida;
+        index index.php index.html index.htm;
+        try_files $uri $uri/ /aparecida/index.php;
+
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_pass backend;
+            fastcgi_split_path_info ^(/aparecida)(/.*)$;
+            fastcgi_param SCRIPT_FILENAME /var/www/html/blogs/aparecida/index.php;
+            fastcgi_param PATH_INFO $fastcgi_path_info;
+        }
+    }
+
+    location ^~ /devotosmirins {
+        alias /var/www/html/blogs/devotosmirins;
+        index index.php index.html index.htm;
+        try_files $uri $uri/ /devotosmirins/index.php;
+
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_pass backend;
+            fastcgi_split_path_info ^(/devotosmirins)(/.*)$;
+            fastcgi_param SCRIPT_FILENAME /var/www/html/blogs/devotosmirins/index.php;
+            fastcgi_param PATH_INFO $fastcgi_path_info;
+        }
+    }
+
+    location ^~ /eventos {
+        alias /var/www/html/blogs/eventos;
+        index index.php index.html index.htm;
+        try_files $uri $uri/ /eventos/index.php;
+
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_pass backend;
+            fastcgi_split_path_info ^(/eventos)(/.*)$;
+            fastcgi_param SCRIPT_FILENAME /var/www/html/blogs/eventos/index.php;
+            fastcgi_param PATH_INFO $fastcgi_path_info;
+        }
+    }
+
+    location ^~ /hotel {
+        alias /var/www/html/blogs/hotel;
+        index index.php index.html index.htm;
+        try_files $uri $uri/ /hotel/index.php;
+
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_pass backend;
+            fastcgi_split_path_info ^(/hotel)(/.*)$;
+            fastcgi_param SCRIPT_FILENAME /var/www/html/blogs/hotel/index.php;
+            fastcgi_param PATH_INFO $fastcgi_path_info;
+        }
+    }
+
+    location ^~ /libras {
+        alias /var/www/html/blogs/libras;
+        index index.php index.html index.htm;
+        try_files $uri $uri/ /libras/index.php;
+
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_pass backend;
+            fastcgi_split_path_info ^(/libras)(/.*)$;
+            fastcgi_param SCRIPT_FILENAME /var/www/html/blogs/libras/index.php;
+            fastcgi_param PATH_INFO $fastcgi_path_info;
+        }
+    }
+
+    location ^~ /obrassociais {
+        alias /var/www/html/blogs/obrassociais;
+        index index.php index.html index.htm;
+        try_files $uri $uri/ /obrassociais/index.php;
+
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_pass backend;
+            fastcgi_split_path_info ^(/obrassociais)(/.*)$;
+            fastcgi_param SCRIPT_FILENAME /var/www/html/blogs/obrassociais/index.php;
+            fastcgi_param PATH_INFO $fastcgi_path_info;
+        }
+    }
+
+    location ^~ /blogs/santopadre {
+        alias /var/www/html/blogs/santopadre;
+        index index.php index.html index.htm;
+        try_files $uri $uri/ /blogs/santopadre/index.php;
+
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_pass backend;
+            fastcgi_split_path_info ^(/blogs/santopadre)(/.*)$;
+            fastcgi_param SCRIPT_FILENAME /var/www/html/blogs/santopadre/index.php;
+            fastcgi_param PATH_INFO $fastcgi_path_info;
+        }
+    }
+
+    location ^~ /vaticano2 {
+        alias /var/www/html/blogs/vaticano2;
+        index index.php index.html index.htm;
+        try_files $uri $uri/ /vaticano2/index.php;
+
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_pass backend;
+            fastcgi_split_path_info ^(/vaticano2)(/.*)$;
+            fastcgi_param SCRIPT_FILENAME /var/www/html/blogs/vaticano2/index.php;
+            fastcgi_param PATH_INFO $fastcgi_path_info;
+        }
+    }
+
+    location ^~ /intranet {
+        alias /var/www/html/blogs/intranet;
+        index index.php index.html index.htm;
+        try_files $uri $uri/ /intranet/index.php;
+
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_pass backend;
+            fastcgi_split_path_info ^(/intranet)(/.*)$;
+            fastcgi_param SCRIPT_FILENAME /var/www/html/blogs/intranet/index.php;
+            fastcgi_param PATH_INFO $fastcgi_path_info;
+        }
+    }
+
+    location ^~ /blog/intranet {
+        alias /var/www/html/blogs/intranet;
+        index index.php index.html index.htm;
+        try_files $uri $uri/ /intranet/index.php;
+
+        location ~ \.php$ {
+            include fastcgi_params;
+            fastcgi_pass backend;
+            fastcgi_split_path_info ^(/blog/intranet)(/.*)$;
+            fastcgi_param SCRIPT_FILENAME /var/www/html/blogs/intranet/index.php;
+            fastcgi_param PATH_INFO $fastcgi_path_info;
+        }
+    }
+
+    location / {
+        try_files $uri $uri/ /index.php;
+    }
+
     location ~ \.php$ {
-        fastcgi_pass   backend;
-        fastcgi_index  index.php;
-        fastcgi_intercept_errors on; # to support 404s for PHP files not found
-        fastcgi_param  SCRIPT_FILENAME $document_root$fastcgi_script_name;
-        include        fastcgi_params;
+        fastcgi_pass backend;
+        fastcgi_index index.php;
+        fastcgi_intercept_errors on;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        include fastcgi_params;
     }
 
-    # Static files.
-    # Set expire headers, Turn off access log
     location ~* \favicon.ico$ {
         access_log off;
         expires 1d;
         add_header Cache-Control public;
     }
+
     location ~ ^/(img|cjs|ccss)/ {
         access_log off;
         expires 7d;
@@ -52,22 +236,20 @@ server {
     }
 
     location ~ ^/(php_status|php_ping)$ {
-      fastcgi_pass backend;
-      fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
-      include fastcgi_params;
-      allow 127.0.0.1;
-      deny all;
+        fastcgi_pass backend;
+        fastcgi_param SCRIPT_FILENAME $fastcgi_script_name;
+        include fastcgi_params;
+        allow 127.0.0.1;
+        deny all;
     }
 
     location /nginx_status {
-      stub_status on;
-      access_log off;
-      allow 127.0.0.1;
-      deny all;
+        stub_status on;
+        access_log off;
+        allow 127.0.0.1;
+        deny all;
     }
 
-    # Deny access to .htaccess files,
-    # git & svn repositories, etc
     location ~ /(\.ht|\.git|\.svn) {
         deny  all;
     }
